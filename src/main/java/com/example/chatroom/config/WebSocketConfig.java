@@ -41,7 +41,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         return (UsernamePasswordAuthenticationToken) attributes.get("principal");
                     }
                 })
-                .setAllowedOriginPatterns("*")
-                .withSockJS();
+                .setAllowedOriginPatterns("*");
     }
 }

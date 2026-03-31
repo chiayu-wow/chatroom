@@ -1,6 +1,98 @@
 # Chatroom API
 
-A real-time chat application backend built with Spring Boot 3.x, WebSocket (STOMP), and JWT authentication.
+A real-time chat application built with Spring Boot 3.x, WebSocket (STOMP), and JWT authentication.
+
+---
+
+## Quick Start
+
+### Option A — IntelliJ (recommended for development)
+
+**Step 1: Start the database**
+```bash
+docker-compose up -d postgres
+```
+
+**Step 2: Set environment variables in IntelliJ**
+
+Go to **Run → Edit Configurations → ChatroomApplication → Environment variables** and add:
+
+```
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/chatroom
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=postgres
+JWT_SECRET=change-me-in-production-must-be-at-least-256-bits-long
+```
+
+**Step 3: Start the app**
+
+Click the ▶ button in the top-right corner of IntelliJ.
+
+**Step 4: Open the chat UI**
+
+Go to [http://localhost:8080](http://localhost:8080) in your browser.
+
+> If you changed any code, go to **Build → Rebuild Project** before restarting.
+
+---
+
+### Option B — Docker (one command)
+
+```bash
+docker-compose up -d --build
+```
+
+Then open [http://localhost:8080](http://localhost:8080).
+
+---
+
+### Stop the app
+
+**IntelliJ:** Click the ■ stop button in IntelliJ, then:
+```bash
+docker-compose down
+```
+
+**Docker:**
+```bash
+docker-compose down
+```
+
+---
+
+## URLs
+
+| URL | Description |
+|---|---|
+| [http://localhost:8080](http://localhost:8080) | Chat UI |
+| [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) | API Docs (Swagger) |
+| [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health) | Health check |
+| [http://localhost:8080/actuator/prometheus](http://localhost:8080/actuator/prometheus) | Prometheus metrics |
+
+---
+
+## API Endpoints
+
+### Auth
+| Method | Path | Description | Auth |
+|---|---|---|---|
+| POST | `/api/auth/register` | Register a new user | — |
+| POST | `/api/auth/login` | Login, returns JWT token | — |
+
+### Rooms
+| Method | Path | Description | Auth |
+|---|---|---|---|
+| GET | `/api/rooms` | List all rooms | JWT |
+| POST | `/api/rooms` | Create a new room | JWT |
+| GET | `/api/rooms/{id}/messages` | Get message history | JWT |
+
+### WebSocket
+| Type | Destination | Description |
+|---|---|---|
+| Subscribe | `/topic/room/{roomId}` | Receive real-time messages |
+| Send | `/app/chat/{roomId}` | Send a message to a room |
+
+> WebSocket endpoint: `ws://localhost:8080/ws?token=<JWT>`
 
 ---
 
@@ -19,92 +111,14 @@ A real-time chat application backend built with Spring Boot 3.x, WebSocket (STOM
 
 ---
 
-## Architecture
+## Environment Variables
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                        Client                           │
-│              (Browser / Mobile App)                     │
-└────────────┬──────────────────────┬────────────────────┘
-             │ REST (HTTP)          │ WebSocket (STOMP)
-             ▼                      ▼
-┌────────────────────────────────────────────────────────┐
-│                    Spring Boot App                     │
-│                                                        │
-│  ┌─────────────┐        ┌──────────────────────────┐  │
-│  │ JWT Filter  │        │   WebSocket Handler      │  │
-│  └──────┬──────┘        │  /app/chat/{roomId}      │  │
-│         │               │  /topic/room/{roomId}    │  │
-│  ┌──────▼──────┐        └────────────┬─────────────┘  │
-│  │ Controllers │                     │ @Async          │
-│  │  /api/auth  │                     ▼                 │
-│  │  /api/rooms │             ┌───────────────┐         │
-│  └──────┬──────┘             │    Service    │         │
-│         └──────────┬─────────┘               │         │
-│                    ▼                          │         │
-│             ┌────────────┐                   │         │
-│             │ Repository │◄──────────────────┘         │
-│             └─────┬──────┘                             │
-└───────────────────┼────────────────────────────────────┘
-                    │
-                    ▼
-            ┌──────────────┐
-            │  PostgreSQL  │
-            └──────────────┘
-```
-
----
-
-## Data Model
-
-```
-User
-├── id (UUID)
-├── username (unique)
-├── email (unique)
-├── password (bcrypt)
-└── createdAt
-
-Room
-├── id (UUID)
-├── name
-├── description
-├── createdBy → User
-└── createdAt
-
-Message
-├── id (UUID)
-├── content
-├── sender → User
-├── room → Room
-└── createdAt
-```
-
----
-
-## API Endpoints
-
-### Auth
-| Method | Path | Description | Auth |
-|---|---|---|---|
-| POST | `/api/auth/register` | 註冊新使用者 | — |
-| POST | `/api/auth/login` | 登入，回傳 JWT | — |
-
-### Rooms
-| Method | Path | Description | Auth |
-|---|---|---|---|
-| GET | `/api/rooms` | 取得所有公開房間 | JWT |
-| POST | `/api/rooms` | 建立新房間 | JWT |
-| GET | `/api/rooms/{id}/messages` | 取得歷史訊息 | JWT |
-
-### WebSocket
-| Type | Destination | Description |
-|---|---|---|
-| Subscribe | `/topic/room/{roomId}` | 接收房間即時訊息 |
-| Send | `/app/chat/{roomId}` | 發送訊息到房間 |
-
-> WebSocket 連線端點：`ws://localhost:8080/ws`
-> JWT 在 WebSocket handshake 時驗證（query param 或 header）
+| Variable | Description |
+|---|---|
+| `SPRING_DATASOURCE_URL` | PostgreSQL connection URL |
+| `SPRING_DATASOURCE_USERNAME` | DB username |
+| `SPRING_DATASOURCE_PASSWORD` | DB password |
+| `JWT_SECRET` | JWT signing key (256 bits+) |
 
 ---
 
@@ -112,95 +126,14 @@ Message
 
 ```
 src/main/java/com/example/chatroom/
-├── ChatroomApplication.java     # 進入點
-├── controller/                  # REST 端點
-├── websocket/                   # STOMP handler
-├── service/                     # 業務邏輯
-├── repository/                  # JPA Repository
-├── model/                       # Entity (User, Room, Message)
-├── dto/                         # Request / Response DTO
-├── security/                    # JWT filter & UserDetails
-├── config/                      # Security, WebSocket, Async 設定
-└── exception/                   # GlobalExceptionHandler
+├── ChatroomApplication.java
+├── controller/        # REST endpoints
+├── websocket/         # STOMP handler
+├── service/           # Business logic
+├── repository/        # JPA repositories
+├── model/             # Entities (User, Room, Message)
+├── dto/               # Request / Response DTOs
+├── security/          # JWT filter & UserDetails
+├── config/            # Security, WebSocket, Async config
+└── exception/         # Global exception handler
 ```
-
----
-
-## Getting Started
-
-### Prerequisites
-- Java 17+
-- Docker & Docker Compose
-
-### Run with Docker Compose
-
-```bash
-docker-compose up -d
-```
-
-### Run Locally
-
-```bash
-# 設定環境變數
-export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/chatroom
-export SPRING_DATASOURCE_USERNAME=postgres
-export SPRING_DATASOURCE_PASSWORD=postgres
-export JWT_SECRET=your-256-bit-secret
-
-mvn spring-boot:run
-```
-
-### API Documentation
-
-啟動後開啟 Swagger UI：[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-
----
-
-## Environment Variables
-
-| Variable | Description | Default |
-|---|---|---|
-| `SPRING_DATASOURCE_URL` | PostgreSQL 連線 URL | `jdbc:postgresql://localhost:5432/chatroom` |
-| `SPRING_DATASOURCE_USERNAME` | DB 使用者 | `postgres` |
-| `SPRING_DATASOURCE_PASSWORD` | DB 密碼 | `postgres` |
-| `JWT_SECRET` | JWT 簽名金鑰（建議 256 bits+） | *(須設定)* |
-
----
-
-## Monitoring
-
-| Endpoint | Description |
-|---|---|
-| `/actuator/health` | 服務健康狀態 |
-| `/actuator/metrics` | 應用程式指標 |
-| `/actuator/prometheus` | Prometheus 格式指標 |
-
-Custom metrics:
-- `chat.messages.sent` — 發送訊息總數
-- `chat.rooms.active` — 活躍房間數
-
----
-
-## Implementation Status
-
-| Component | Status |
-|---|---|
-| Project setup (pom.xml, application.yml) | ✅ Done |
-| Entity models (User, Room, Message) | ✅ Done |
-| JPA Repositories | ✅ Done |
-| DTOs (Request / Response) | ✅ Done |
-| JWT Service | ✅ Done |
-| JWT Auth Filter | ✅ Done |
-| WebSocket Auth Interceptor | ✅ Done |
-| UserDetailsService | ✅ Done |
-| Security Config | ✅ Done |
-| WebSocket Config (STOMP) | ✅ Done |
-| Async Config | ✅ Done |
-| Auth Controller | ✅ Done |
-| Room Controller | ✅ Done |
-| WebSocket Chat Handler | ✅ Done |
-| Services (User, Room, Message) | ✅ Done |
-| Global Exception Handler | ✅ Done |
-| Swagger / OpenAPI Config | ✅ Done |
-| Docker Compose | ✅ Done |
-| Tests | 🔲 Pending |
