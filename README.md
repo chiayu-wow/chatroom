@@ -194,12 +194,13 @@ Custom metrics:
 | WebSocket Auth Interceptor | ✅ Done |
 | UserDetailsService | ✅ Done |
 | Security Config | ✅ Done |
-| WebSocket Config (STOMP) | 🚧 In Progress |
-| Async Config | 🔲 Pending |
-| Auth Controller | 🔲 Pending |
-| Room Controller | 🔲 Pending |
-| WebSocket Chat Handler | 🔲 Pending |
-| Services (User, Room, Message) | 🔲 Pending |
-| Global Exception Handler | 🔲 Pending |
-| Docker Compose | 🔲 Pending |
+| WebSocket Config (STOMP) | ✅ Done |
+| Async Config | ✅ Done |
+| Auth Controller | ✅ Done |
+| Room Controller | ✅ Done |
+| WebSocket Chat Handler | ✅ Done |
+| Services (User, Room, Message) | ✅ Done |
+| Global Exception Handler | ✅ Done |
+| Swagger / OpenAPI Config | ✅ Done |
+| Docker Compose | ✅ Done |
 | Tests | 🔲 Pending |
