@@ -178,3 +178,28 @@ mvn spring-boot:run
 Custom metrics:
 - `chat.messages.sent` — 發送訊息總數
 - `chat.rooms.active` — 活躍房間數
+
+---
+
+## Implementation Status
+
+| Component | Status |
+|---|---|
+| Project setup (pom.xml, application.yml) | ✅ Done |
+| Entity models (User, Room, Message) | ✅ Done |
+| JPA Repositories | ✅ Done |
+| DTOs (Request / Response) | ✅ Done |
+| JWT Service | ✅ Done |
+| JWT Auth Filter | ✅ Done |
+| WebSocket Auth Interceptor | ✅ Done |
+| UserDetailsService | ✅ Done |
+| Security Config | ✅ Done |
+| WebSocket Config (STOMP) | 🚧 In Progress |
+| Async Config | 🔲 Pending |
+| Auth Controller | 🔲 Pending |
+| Room Controller | 🔲 Pending |
+| WebSocket Chat Handler | 🔲 Pending |
+| Services (User, Room, Message) | 🔲 Pending |
+| Global Exception Handler | 🔲 Pending |
+| Docker Compose | 🔲 Pending |
+| Tests | 🔲 Pending |
