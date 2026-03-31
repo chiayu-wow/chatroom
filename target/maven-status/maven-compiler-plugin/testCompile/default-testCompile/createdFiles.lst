@@ -1,8 +1,0 @@
-com/example/chatroom/controller/AuthControllerIntegrationTest.class
-com/example/chatroom/service/RoomServiceTest.class
-com/example/chatroom/BaseIntegrationTest.class
-com/example/chatroom/service/UserServiceTest.class
-com/example/chatroom/security/JwtServiceTest.class
-com/example/chatroom/service/MessageServiceTest.class
-com/example/chatroom/controller/RoomControllerIntegrationTest.class
-com/example/chatroom/ChatroomApplicationTests.class

@@ -1,8 +1,0 @@
-/Users/chiayuwang/Desktop/chatroom/src/test/java/com/example/chatroom/BaseIntegrationTest.java
-/Users/chiayuwang/Desktop/chatroom/src/test/java/com/example/chatroom/ChatroomApplicationTests.java
-/Users/chiayuwang/Desktop/chatroom/src/test/java/com/example/chatroom/controller/AuthControllerIntegrationTest.java
-/Users/chiayuwang/Desktop/chatroom/src/test/java/com/example/chatroom/controller/RoomControllerIntegrationTest.java
-/Users/chiayuwang/Desktop/chatroom/src/test/java/com/example/chatroom/security/JwtServiceTest.java
-/Users/chiayuwang/Desktop/chatroom/src/test/java/com/example/chatroom/service/MessageServiceTest.java
-/Users/chiayuwang/Desktop/chatroom/src/test/java/com/example/chatroom/service/RoomServiceTest.java
-/Users/chiayuwang/Desktop/chatroom/src/test/java/com/example/chatroom/service/UserServiceTest.java
